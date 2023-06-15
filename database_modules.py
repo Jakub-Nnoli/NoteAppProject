@@ -1,6 +1,6 @@
 from datetime import date, time
-from sqlalchemy import Integer, Date, Time, String, ForeignKey, create_engine, select
-from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, Date, Time, String, ForeignKey, create_engine
+from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column, Session
 
 class Base(DeclarativeBase):
     pass
@@ -10,7 +10,6 @@ class Users(Base):
 
     userLogin:Mapped[str] = mapped_column(String, primary_key=True)
     userPassword:Mapped[str] = mapped_column(String, nullable=False)
-    userEmail:Mapped[str] = mapped_column(String, nullable=False, info={'check_constraint': "userEmail ~ '^[\w\.-]+@[\w\.-]+\.\w+$'"})
 
 class Notes(Base):
     __tablename__ = 'Notes'
@@ -20,3 +19,10 @@ class Notes(Base):
     noteTime:Mapped[time] = mapped_column(Time, nullable=True)
     noteText:Mapped[str] = mapped_column(String, nullable=False)
     noteUser:Mapped[str] = mapped_column(String, ForeignKey("Users.userLogin"))
+
+def createDatabase():
+    engine = create_engine(f'sqlite:///NotepadDatabase.db')
+    Base.metadata.create_all(engine)
+
+if __name__=='__main__':
+    createDatabase()
