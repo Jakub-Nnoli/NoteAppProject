@@ -1,12 +1,22 @@
-import os, sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTableView, QMenuBar, QMenu, QGridLayout, QHBoxLayout, QPushButton, QLabel
+import os, sys, subprocess
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTableView, QMenuBar, QMenu, QGridLayout, QPushButton, QLabel, QMessageBox, QAbstractItemView
 from PyQt6.QtCore import QRect
-from PyQt6.QtGui import QAction, QIcon,  QFont
+from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery
+
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 from database_modules import Users, Notes
 
 class UserNotesWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, username:str):
         super().__init__()
+
+        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+
+        with Session(self.engine) as session:
+            self.user = session.execute(select((Users)).where(Users.userLogin == username)).fetchone()[0]
+
         self.iconPath = os.path.join(os.getcwd(),"Icons")
 
         self.setWindowTitle("NotepadS")
@@ -28,6 +38,7 @@ class UserNotesWindow(QMainWindow):
 
         self.tableView = QTableView(self.centralNoteWidget)
         self.tableView.setGeometry(QRect(10, 70, 781, 461))
+        self.tableView.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
         self.openNoteButton = QPushButton(self.centralNoteWidget)
         self.openNoteButton.setGeometry(QRect(650, 540, 141, 31))
@@ -64,9 +75,6 @@ class UserNotesWindow(QMainWindow):
         self.actionChangePassword = QAction()
         self.actionChangePassword.setText("Change password")
 
-        self.actionChangeEmail = QAction()
-        self.actionChangeEmail.setText("Change email")
-
         self.actionDeleteAccount = QAction()
         self.actionDeleteAccount.setText("Delete account")
 
@@ -77,7 +85,6 @@ class UserNotesWindow(QMainWindow):
 
         self.menuAccount.addAction(self.actionChangeLogin)
         self.menuAccount.addAction(self.actionChangePassword)
-        self.menuAccount.addAction(self.actionChangeEmail)
         self.menuAccount.addSeparator()
         self.menuAccount.addAction(self.actionDeleteAccount)
 
@@ -86,9 +93,41 @@ class UserNotesWindow(QMainWindow):
 
         self.setMenuBar(self.menubar)
 
+        self.readUserNotes()
+
+    def readUserNotes(self):
+        dbView = QSqlDatabase.addDatabase("QSQLITE")
+        dbView.setDatabaseName(os.path.join(os.getcwd(),"NotepadDatabase.db"))
+
+        if not dbView.open():
+            QMessageBox.warning(self, "Database error", "Can't connect to database.\nTry again later.")
+            self.close()
+
+        noteTable = QSqlTableModel()
+        noteTable.setTable("Notes")
+        noteTable.select()
+
+        userNotes = QSqlQuery()
+        userNotes.prepare(f"SELECT noteDate AS Date, noteTime AS Time, noteText AS Note FROM Notes WHERE noteUser = '{self.user.userLogin}'")
+        userNotes.exec()
+
+        noteTable.setQuery(userNotes)
+
+        self.tableView.setModel(noteTable)
+    
+    def createNewNote():
+        return 0
+    
+    def editSelectedNote(self,index):
+        return 0
+    
+    def deleteSelectedNote(self, index):
+        return 0
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = UserNotesWindow()
+    #username = sys.argv[1]
+    window = UserNotesWindow('user')
     window.show()
     sys.exit(app.exec())

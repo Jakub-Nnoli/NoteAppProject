@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit, QPushButton, QLabel, QMessageBox
 from PyQt6.QtCore import QRect
 from PyQt6.QtGui import  QPixmap, QIcon
@@ -76,7 +76,8 @@ class StartLoginWindow(QMainWindow):
                 if user.userPassword != password:
                     QMessageBox.warning(self, "Invalid password", f"Invalid password for user {username}")
                 else:
-                    QMessageBox.information(self, "Login succesful", f"Login successful! :)")
+                    subprocess.Popen(['python', 'user_notes_window.py', username])
+                    self.close()
     
     def register(self):
         registration = RegisterDialog()
