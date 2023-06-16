@@ -1,6 +1,5 @@
 import sys, os
-from datetime import date, datetime
-from PyQt6 import QtGui
+from datetime import date
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTextEdit, QMenuBar, QMenu, QDialog, QPushButton, QLabel, QDateEdit, QTimeEdit, QCheckBox
 from PyQt6.QtCore import QRect, Qt, QDate
 from PyQt6.QtGui import QIcon, QAction, QKeySequence, QCloseEvent
@@ -107,17 +106,17 @@ class TextEditorWindow(QMainWindow):
         self.menubar.setGeometry(QRect(0, 0, 800, 22))
 
         self.menuNote = QMenu("Note")
-        self.menuEdit = QMenu("Edit note")
+        self.menuEdit = QMenu("Edit")
 
-        self.actionSave = QAction("Save")
-        self.actionClose = QAction("Close")
+        self.actionSave =self.createAction("Save", self.saveNote, "SaveIcon.png", QKeySequence.StandardKey.Save)
+        self.actionClose = self.createAction("Close", self.close, "CloseIcon.png", QKeySequence.StandardKey.Close)
 
-        self.actionCut = QAction("Cut")
-        self.actionCopy = QAction("Copy")
-        self.actionPaste = QAction("Paste")
-        self.actionClear = QAction("Clear")
-        self.actionUndo = QAction("Undo")
-        self.actionRedo = QAction("Redo")
+        self.actionCut = self.createAction("Cut", self.noteEdit.cut, "CutIcon.png", QKeySequence.StandardKey.Cut)
+        self.actionCopy = self.createAction("Copy", self.noteEdit.copy, "CopyIcon.png", QKeySequence.StandardKey.Copy)
+        self.actionPaste = self.createAction("Paste", self.noteEdit.paste, "PasteIcon.png", QKeySequence.StandardKey.Paste)
+        self.actionClear = self.createAction("Clear", self.noteEdit.clear)
+        self.actionUndo = self.createAction("Undo", self.noteEdit.undo, "UndoIcon.png", QKeySequence.StandardKey.Undo)
+        self.actionRedo = self.createAction("Redo", self.noteEdit.redo, "RedoIcon.png", QKeySequence.StandardKey.Redo)
 
         self.menuNote.addAction(self.actionSave)
         self.menuNote.addAction(self.actionClose)
@@ -130,13 +129,14 @@ class TextEditorWindow(QMainWindow):
         self.menuEdit.addAction(self.actionUndo)
         self.menuEdit.addAction(self.actionRedo)
 
+        self.menubar.addAction(self.menuNote.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
 
         self.setMenuBar(self.menubar)
     
     def onNoteChanged(self):
         self.setWindowTitle("* "+self.windowTitle())
-        self.changedText = True
+        self.changedNote = True
         self.timeEdit.timeChanged.disconnect()
         self.dateEdit.dateChanged.disconnect()
         self.noteEdit.textChanged.disconnect()
@@ -144,7 +144,8 @@ class TextEditorWindow(QMainWindow):
     def createAction(self, actionText:str, actionFunc:callable, actionIcon:str=None, actionKeySequence:QKeySequence=None):
         action = QAction()
         action.setText(actionText)
-        action.setIcon(QIcon(actionIcon))
+        if actionIcon:
+            action.setIcon(QIcon(os.path.join(self.iconPath, actionIcon)))
         if actionKeySequence:
             action.setShortcut(actionKeySequence)
         action.triggered.connect(actionFunc)
@@ -159,32 +160,27 @@ class TextEditorWindow(QMainWindow):
             self.dateEdit.setEnabled(False)
             self.timeEdit.setEnabled(False)
 
+    def saveNoteOption(self):
+        if self.changedNote:
+            saveDialog = SaveNoteDialog()
+            saveDialog.exec()
+            option = saveDialog.saveOption
+            if option == 0:
+                self.saveNote()
+            if option == 1:
+                return 0
+            else:
+                return 1
+        return 1
+    
     def saveNote(self):
         return 0
     
-    def closeNote(self):
-        return 0
-    
-    def cutAction(self):
-        return 0
-    
-    def copyAction(self):
-        return 0
-    
-    def pasteAction(self):
-        return 0
-    
-    def clearAction(self):
-        return 0
-    
-    def undoAction(self):
-        return 0
-    
-    def redoAction(self):
-        return 0
-    
-    def closeEvent(self, a0: QCloseEvent) -> None:
-        return super().closeEvent(a0)
+    def closeEvent(self, a0: QCloseEvent):
+        if self.saveNoteOption() == 1:
+            a0.accept()
+        else:
+            a0.ignore()
 
 
 if __name__=='__main__':
