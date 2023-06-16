@@ -1,11 +1,21 @@
 import os, sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit, QPushButton, QLabel, QDialog
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit, QPushButton, QLabel, QMessageBox
 from PyQt6.QtCore import QRect
 from PyQt6.QtGui import  QPixmap, QIcon
 
+from database_modules import Users
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+
+from register_dialog import RegisterDialog
+from reset_password_dialog import ResetPasswordDialog
+
 class StartLoginWindow(QMainWindow):
+
     def __init__(self):
         super().__init__()
+        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+
         self.iconPath = os.path.join(os.getcwd(),"Icons")
 
         self.setWindowTitle("NotepadS")
@@ -39,16 +49,42 @@ class StartLoginWindow(QMainWindow):
         self.loginButton = QPushButton(parent=self.mainWidget)
         self.loginButton.setGeometry(QRect(410, 420, 121, 31))
         self.loginButton.setText("Login")
+        self.loginButton.clicked.connect(self.login)
 
         self.registerButton = QPushButton(parent=self.mainWidget)
         self.registerButton.setGeometry(QRect(270, 420, 121, 31))
         self.registerButton.setText("Register")
+        self.registerButton.clicked.connect(self.register)
 
         self.forgotPassButton = QPushButton(parent=self.mainWidget)
         self.forgotPassButton.setGeometry(QRect(330, 460, 141, 31))
         self.forgotPassButton.setText("Forgot password?")
+        self.forgotPassButton.clicked.connect(self.resetPassword)
 
         self.setCentralWidget(self.mainWidget)
+
+    def login(self):
+        username = self.usernameLineEdit.text()
+        password = self.passwordLineEdit.text()
+
+        with Session(self.engine) as session:
+            doesUserExistQuery = select((Users)).where(Users.userLogin == username)
+            if not session.execute(doesUserExistQuery).scalar():
+                QMessageBox.warning(self, "User Not Found", f"User {username} does not exist!")
+            else:
+                user = session.execute(doesUserExistQuery).fetchone()[0]
+                if user.userPassword != password:
+                    QMessageBox.warning(self, "Invalid password", f"Invalid password for user {username}")
+                else:
+                    QMessageBox.information(self, "Login succesful", f"Login successful! :)")
+    
+    def register(self):
+        registration = RegisterDialog()
+        registration.exec()
+    
+    def resetPassword(self):
+        resetPassword = ResetPasswordDialog()
+        resetPassword.exec()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
