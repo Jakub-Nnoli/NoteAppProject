@@ -1,17 +1,16 @@
 import os, sys, subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit, QPushButton, QLabel, QMessageBox
-from PyQt6.QtCore import QRect
-from PyQt6.QtGui import  QPixmap, QIcon
+from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtGui import  QPixmap, QIcon, QKeySequence
 
 from database_modules import Users
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from register_dialog import RegisterDialog
-from reset_password_dialog import ResetPasswordDialog
+from necessary_dialogs import RegisterDialog, ResetPasswordDialog
+
 
 class StartLoginWindow(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.engine = create_engine('sqlite:///NotepadDatabase.db')
@@ -50,6 +49,7 @@ class StartLoginWindow(QMainWindow):
         self.loginButton.setGeometry(QRect(410, 420, 121, 31))
         self.loginButton.setText("Login")
         self.loginButton.clicked.connect(self.login)
+        self.loginButton.setShortcut(QKeySequence(Qt.Key.Key_Return))
 
         self.registerButton = QPushButton(parent=self.mainWidget)
         self.registerButton.setGeometry(QRect(270, 420, 121, 31))
@@ -68,15 +68,15 @@ class StartLoginWindow(QMainWindow):
         password = self.passwordLineEdit.text()
 
         with Session(self.engine) as session:
-            doesUserExistQuery = select((Users)).where(Users.userLogin == username)
+            doesUserExistQuery = select(Users).where(Users.userLogin == username)
             if not session.execute(doesUserExistQuery).scalar():
                 QMessageBox.warning(self, "User Not Found", f"User {username} does not exist!")
             else:
                 user = session.execute(doesUserExistQuery).fetchone()[0]
                 if user.userPassword != password:
-                    QMessageBox.warning(self, "Invalid password", f"Invalid password for user {username}")
+                    QMessageBox.warning(self, "Invalid password", f"Invalid password for user {username}!")
                 else:
-                    subprocess.Popen(['python', 'user_notes_window.py', username])
+                    subprocess.Popen(['python', 'user_notes_window.py', username, '1'])
                     self.close()
     
     def register(self):

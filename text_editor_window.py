@@ -1,62 +1,28 @@
-import sys, os
+import sys, os, subprocess
 from datetime import date
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTextEdit, QMenuBar, QMenu, QDialog, QPushButton, QLabel, QDateEdit, QTimeEdit, QCheckBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTextEdit, QMenuBar, QMenu, QPushButton, QLabel, QDateEdit, QTimeEdit, QCheckBox, QMessageBox
 from PyQt6.QtCore import QRect, Qt, QDate
 from PyQt6.QtGui import QIcon, QAction, QKeySequence, QCloseEvent
 
-class SaveNoteDialog(QDialog):
-    def __init__(self):
-        super().__init__()
-    
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+from database_modules import Notes
 
-        self.setWindowTitle("NotepadS")
-        self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
-        self.setFixedSize(400,94)
-
-        self.saveButton = QPushButton(parent=self)
-        self.saveButton.setGeometry(QRect(10, 50, 121, 31))
-        self.saveButton.setText("Save")
-
-        self.dontsaveButton = QPushButton(parent=self)
-        self.dontsaveButton.setGeometry(QRect(140, 50, 121, 31))
-        self.dontsaveButton.setText("Don\'t save")
-
-        self.cancelButton = QPushButton(parent=self)
-        self.cancelButton.setGeometry(QRect(270, 50, 121, 31))
-        self.cancelButton.setText("Cancel")
-
-        self.questionLabel = QLabel(parent=self)
-        self.questionLabel.setGeometry(QRect(10, 10, 381, 21))
-        self.questionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.questionLabel.setText("There are unsaved changes in note. Would you like to save them?")
-
-        self.saveOption = -1
-
-        self.saveButton.clicked.connect(self.saveNote)
-        self.dontsaveButton.clicked.connect(self.dontSaveNote)
-        self.cancelButton.clicked.connect(self.cancel)
-
-
-    def saveNote(self):
-        self.saveOption = 0
-        self.accept()
-    
-    def dontSaveNote(self):
-        self.accept()
-    
-    def cancel(self):
-        self.saveOption = 1
-        self.accept()
+from necessary_dialogs import SaveNoteDialog
 
 class TextEditorWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, noteID, userLogin):
         super().__init__()
         self.iconPath = os.path.join(os.getcwd(),"Icons")
 
+        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+
+        self.noteID = noteID
+        self.userLogin = userLogin
+
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
-        self.setFixedSize(511,463)
+        self.setFixedSize(511,483)
 
         self.centralNoteWidget = QWidget()
         self.setCentralWidget(self.centralNoteWidget)
@@ -93,14 +59,14 @@ class TextEditorWindow(QMainWindow):
         self.noteEdit.setGeometry(QRect(10, 110, 491, 281))
 
         self.changedNote = False
-        if not self.changedNote:
-            self.timeEdit.timeChanged.connect(self.onNoteChanged)
-            self.dateEdit.dateChanged.connect(self.onNoteChanged)
-            self.noteEdit.textChanged.connect(self.onNoteChanged)
+        self.loadCurrentNote()
+        self.onNoteSaved()
 
-        self.pushButton = QPushButton(parent=self.centralNoteWidget)
-        self.pushButton.setGeometry(QRect(350, 400, 151, 31))
-        self.pushButton.setText("Save note")
+        self.saveButton = QPushButton(parent=self.centralNoteWidget)
+        self.saveButton.setGeometry(QRect(350, 400, 151, 51))
+        self.saveButton.setText("Save and close note\n(Ctrl+Enter)")
+        self.saveButton.clicked.connect(self.saveAndClose)
+        self.saveButton.setShortcut(QKeySequence("Ctrl+Return"))
 
         self.menubar = QMenuBar()
         self.menubar.setGeometry(QRect(0, 0, 800, 22))
@@ -133,13 +99,34 @@ class TextEditorWindow(QMainWindow):
         self.menubar.addAction(self.menuEdit.menuAction())
 
         self.setMenuBar(self.menubar)
+
+    def loadCurrentNote(self):
+        if self.noteID != -1:
+            with Session(self.engine) as session:
+                note = session.execute(select(Notes).where(Notes.noteID == self.noteID)).fetchone()[0]
+                if note.noteDate and note.noteTime:
+                    self.reminderCheckBox.setChecked(True)
+                    self.dateEdit.setDate(note.noteDate)
+                    self.timeEdit.setTime(note.noteTime)
+                self.noteEdit.setText(note.noteText)
     
     def onNoteChanged(self):
-        self.setWindowTitle("* "+self.windowTitle())
+        if not self.changedNote:
+            self.timeEdit.timeChanged.disconnect()
+            self.dateEdit.dateChanged.disconnect()
+            self.noteEdit.textChanged.disconnect()
         self.changedNote = True
-        self.timeEdit.timeChanged.disconnect()
-        self.dateEdit.dateChanged.disconnect()
-        self.noteEdit.textChanged.disconnect()
+        self.setWindowTitle("* "+self.windowTitle())
+
+    def onNoteSaved(self):
+        if self.changedNote:
+            self.timeEdit.timeChanged.connect(self.onNoteChanged)
+            self.dateEdit.dateChanged.connect(self.onNoteChanged)
+            self.noteEdit.textChanged.connect(self.onNoteChanged)
+            self.reminderCheckBox.clicked.connect(self.onNoteChanged)
+        self.changedNote = False
+        if self.windowTitle().startswith("* "):
+            self.setWindowTitle(self.windowTitle()[2:])
 
     def createAction(self, actionText:str, actionFunc:callable, actionIcon:str=None, actionKeySequence:QKeySequence=None):
         action = QAction()
@@ -151,8 +138,13 @@ class TextEditorWindow(QMainWindow):
         action.triggered.connect(actionFunc)
         return action
 
-    def enableReminder(self):
+    def checkReminderState(self):
         if self.reminderCheckBox.checkState() == Qt.CheckState.Checked:
+            return True
+        return False
+
+    def enableReminder(self):
+        if self.checkReminderState():
             self.dateEdit.setEnabled(True)
             self.timeEdit.setEnabled(True)
         else:
@@ -173,18 +165,75 @@ class TextEditorWindow(QMainWindow):
                 return 1
         return 1
     
+    def addNoteReminder(self):
+        readDate = self.dateEdit.date().toPyDate()
+        readTime = self.timeEdit.time().toPyTime()
+        readText = self.noteEdit.toPlainText()
+        note = Notes(noteDate=readDate, noteTime=readTime, noteText=readText, noteUser=self.userLogin)
+        return note
+    
+    def addNoteNoReminder(self):
+        readText = self.noteEdit.toPlainText()
+        note = Notes(noteText=readText, noteUser=self.userLogin)
+        return note
+    
+    def updateNoteReminder(self, note):
+        readDate = self.dateEdit.date().toPyDate()
+        readTime = self.timeEdit.time().toPyTime()
+        readText = self.noteEdit.toPlainText()
+
+        note.noteDate=readDate
+        note.noteTime=readTime
+        note.noteText=readText
+        return note
+    
+    def updateNoteNoReminder(self, note):
+        note.noteDate=None
+        note.noteTime=None
+        readText = self.noteEdit.toPlainText()
+        note.noteText=readText
+        return note
+
     def saveNote(self):
-        return 0
+        if self.noteEdit.toPlainText()=='':
+            QMessageBox.information(self,"Empty note", "Cannot save empty note!")
+        else:
+            with Session(self.engine) as session:
+                if self.noteID == -1:
+                    if self.checkReminderState():
+                        note = self.addNoteReminder()
+                    else:
+                        note = self.addNoteNoReminder()
+                    session.add(note)
+                else:
+                    note = session.execute(select(Notes).where(Notes.noteID == self.noteID)).fetchone()[0]
+                    if not note:
+                        QMessageBox.warning(self, "Note not existing!", "Note does not exist!")
+                    else:
+                        if self.checkReminderState():
+                            note = self.updateNoteReminder(note)
+                        else:
+                            note = self.updateNoteNoReminder(note)
+                session.commit()
+                self.noteID = note.noteID
+            self.onNoteSaved()
+
+    def saveAndClose(self):
+        self.saveNote()
+        self.close()
     
     def closeEvent(self, a0: QCloseEvent):
         if self.saveNoteOption() == 1:
             a0.accept()
+            subprocess.Popen(['python', 'user_notes_window.py', self.userLogin, '0'])
         else:
             a0.ignore()
 
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
-    window = TextEditorWindow()
+    noteID = int(sys.argv[1])
+    userLogin = sys.argv[2]
+    window = TextEditorWindow(noteID, userLogin)
     window.show()
     sys.exit(app.exec())

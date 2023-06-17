@@ -1,6 +1,6 @@
 from datetime import date, time
 from sqlalchemy import Integer, Date, Time, String, ForeignKey, create_engine
-from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column, Session
+from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column, relationship
 
 class Base(DeclarativeBase):
     pass
@@ -10,6 +10,7 @@ class Users(Base):
 
     userLogin:Mapped[str] = mapped_column(String, primary_key=True)
     userPassword:Mapped[str] = mapped_column(String, nullable=False)
+    userNotes = relationship("Notes", cascade="all, delete-orphan")
 
 class Notes(Base):
     __tablename__ = 'Notes'
