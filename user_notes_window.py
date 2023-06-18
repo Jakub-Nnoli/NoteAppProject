@@ -23,7 +23,7 @@ class UserNotesWindow(QMainWindow):
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
         self.database = os.path.join(os.path.dirname(sys.argv[0]),"NotepadDatabase.db")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(800, 600)
 

@@ -1,3 +1,4 @@
+import os,sys
 from datetime import date, time
 from sqlalchemy import Integer, Date, Time, String, ForeignKey, create_engine
 from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column, relationship
@@ -22,7 +23,7 @@ class Notes(Base):
     noteUser:Mapped[str] = mapped_column(String, ForeignKey("Users.userLogin"))
 
 def createDatabase():
-    engine = create_engine(f'sqlite:///NotepadDatabase.db')
+    engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
     Base.metadata.create_all(engine)
 
 if __name__=='__main__':

@@ -17,7 +17,7 @@ class RegisterDialog(QDialog):
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,175)
 
@@ -84,7 +84,7 @@ class ResetPasswordDialog(QDialog):
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(450,130)
 
@@ -138,7 +138,7 @@ class SaveNoteDialog(QDialog):
     
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,95)
 
@@ -180,7 +180,7 @@ class ChangeLoginDialog(QDialog):
     def __init__(self, userLogin):
         super().__init__()
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,95)
 
@@ -231,7 +231,7 @@ class ChangePasswordDialog(QDialog):
     def __init__(self, userLogin):
         super().__init__()
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,135)
 
@@ -297,7 +297,7 @@ class ReminderDialog(QDialog):
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,280)
 

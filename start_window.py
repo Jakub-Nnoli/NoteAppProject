@@ -17,7 +17,7 @@ class StartLoginWindow(QMainWindow):
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.setWindowTitle("NotepadS")
+        self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(800, 600)
 
