@@ -6,4 +6,5 @@ COPY Icons /app/Icons
 COPY requirements.txt /app/
 WORKDIR /app
 RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
 CMD ["python", "start_window.py"]
