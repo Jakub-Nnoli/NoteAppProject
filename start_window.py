@@ -13,9 +13,9 @@ from necessary_dialogs import RegisterDialog, ResetPasswordDialog
 class StartLoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
@@ -76,7 +76,7 @@ class StartLoginWindow(QMainWindow):
                 if user.userPassword != password:
                     QMessageBox.warning(self, "Invalid password", f"Invalid password for user {username}!")
                 else:
-                    subprocess.Popen(['python', 'user_notes_window.py', username, '1'])
+                    subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'user_notes_window.py'), username, '1'])
                     self.close()
     
     def register(self):

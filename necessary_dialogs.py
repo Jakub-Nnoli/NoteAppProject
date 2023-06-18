@@ -13,9 +13,9 @@ class RegisterDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
@@ -80,9 +80,9 @@ class ResetPasswordDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
@@ -136,7 +136,7 @@ class SaveNoteDialog(QDialog):
     def __init__(self):
         super().__init__()
     
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
@@ -186,9 +186,9 @@ class ChangeLoginDialog(QDialog):
 
         self.userLogin = userLogin
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.newUsernameLabel = QLabel(parent=self)
         self.newUsernameLabel.setGeometry(QRect(10, 50, 81, 31))
@@ -237,9 +237,9 @@ class ChangePasswordDialog(QDialog):
 
         self.userLogin = userLogin
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.currPasswordLabel = QLabel(parent=self)
         self.currPasswordLabel.setGeometry(QRect(10, 10, 81, 31))
@@ -295,7 +295,7 @@ class ReminderDialog(QDialog):
     def __init__(self, noteText:str, noteDate:date, noteTime:time):
         super().__init__()
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))

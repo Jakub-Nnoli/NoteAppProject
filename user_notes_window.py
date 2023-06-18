@@ -15,13 +15,13 @@ class UserNotesWindow(QMainWindow):
     def __init__(self, username:str, triggerReminders:int):
         super().__init__()
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
         with Session(self.engine) as session:
             self.user = session.execute(select(Users).where(Users.userLogin == username)).fetchone()[0]
 
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
-        self.database = os.path.join(os.getcwd(),"NotepadDatabase.db")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
+        self.database = os.path.join(os.path.dirname(sys.argv[0]),"NotepadDatabase.db")
 
         self.setWindowTitle("NotepadS")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
@@ -112,15 +112,15 @@ class UserNotesWindow(QMainWindow):
         return action
     
     def changeLogin(self):
-        changeLogin = ChangeLoginDialog()
+        changeLogin = ChangeLoginDialog(self.user.userLogin)
         changeLogin.exec()
     
     def changePassword(self):
-        changePassword = ChangePasswordDialog()
+        changePassword = ChangePasswordDialog(self.user.userLogin)
         changePassword.exec()
     
     def logOut(self):
-        subprocess.Popen(['python', 'start_window.py'])
+        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'start_window.py')])
         self.close()
     
     def deleteAccount(self):
@@ -128,7 +128,7 @@ class UserNotesWindow(QMainWindow):
             session.delete(self.user)
             session.commit()
 
-        subprocess.Popen(['python', 'start_window.py'])
+        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'start_window.py')])
         self.close()
 
     def readUserNotes(self):
@@ -178,7 +178,7 @@ class UserNotesWindow(QMainWindow):
         self.tableView.model().sort(logicalIndex, Qt.SortOrder.AscendingOrder)
 
     def createNote(self):
-        subprocess.Popen(['python', 'text_editor_window.py', '-1', self.user.userLogin])
+        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'text_editor_window.py'), '-1', self.user.userLogin])
         self.close()
     
     def selectNote(self, index):
@@ -212,7 +212,7 @@ class UserNotesWindow(QMainWindow):
         noteIndex = self.tableView.currentIndex()
         noteID = self.selectNote(noteIndex)
         if not noteID == -1:
-            subprocess.Popen(['python', 'text_editor_window.py', str(noteID), self.user.userLogin])
+            subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'text_editor_window.py'), str(noteID), self.user.userLogin])
             self.close()
 
 

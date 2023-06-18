@@ -13,9 +13,9 @@ from necessary_dialogs import SaveNoteDialog
 class TextEditorWindow(QMainWindow):
     def __init__(self, noteID, userLogin):
         super().__init__()
-        self.iconPath = os.path.join(os.getcwd(),"Icons")
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.engine = create_engine('sqlite:///NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
 
         self.noteID = noteID
         self.userLogin = userLogin
@@ -58,8 +58,8 @@ class TextEditorWindow(QMainWindow):
         self.noteEdit = QTextEdit(parent=self.centralNoteWidget)
         self.noteEdit.setGeometry(QRect(10, 110, 491, 281))
 
-        self.changedNote = False
         self.loadCurrentNote()
+        self.changedNote = False
         self.onNoteSaved()
 
         self.saveButton = QPushButton(parent=self.centralNoteWidget)
@@ -111,20 +111,18 @@ class TextEditorWindow(QMainWindow):
                 self.noteEdit.setText(note.noteText)
     
     def onNoteChanged(self):
-        if not self.changedNote:
-            self.timeEdit.timeChanged.disconnect()
-            self.dateEdit.dateChanged.disconnect()
-            self.noteEdit.textChanged.disconnect()
         self.changedNote = True
+        self.timeEdit.timeChanged.disconnect()
+        self.dateEdit.dateChanged.disconnect()
+        self.noteEdit.textChanged.disconnect()
+        self.reminderCheckBox.clicked.disconnect()
         self.setWindowTitle("* "+self.windowTitle())
 
     def onNoteSaved(self):
-        if self.changedNote:
-            self.timeEdit.timeChanged.connect(self.onNoteChanged)
-            self.dateEdit.dateChanged.connect(self.onNoteChanged)
-            self.noteEdit.textChanged.connect(self.onNoteChanged)
-            self.reminderCheckBox.clicked.connect(self.onNoteChanged)
-        self.changedNote = False
+        self.timeEdit.timeChanged.connect(self.onNoteChanged)
+        self.dateEdit.dateChanged.connect(self.onNoteChanged)
+        self.noteEdit.textChanged.connect(self.onNoteChanged)
+        self.reminderCheckBox.clicked.connect(self.onNoteChanged)
         if self.windowTitle().startswith("* "):
             self.setWindowTitle(self.windowTitle()[2:])
 
@@ -216,6 +214,7 @@ class TextEditorWindow(QMainWindow):
                             note = self.updateNoteNoReminder(note)
                 session.commit()
                 self.noteID = note.noteID
+            self.changedNote = False
             self.onNoteSaved()
 
     def saveAndClose(self):
@@ -225,7 +224,7 @@ class TextEditorWindow(QMainWindow):
     def closeEvent(self, a0: QCloseEvent):
         if self.saveNoteOption() == 1:
             a0.accept()
-            subprocess.Popen(['python', 'user_notes_window.py', self.userLogin, '0'])
+            subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'user_notes_window.py'), self.userLogin, '0'])
         else:
             a0.ignore()
 
