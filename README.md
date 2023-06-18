@@ -1,2 +1,2 @@
-# NotepadProject
-Notepad project repository
+# NoteAppProject
+NoteApp project repository
