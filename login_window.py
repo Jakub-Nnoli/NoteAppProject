@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit, QPush
 from PyQt6.QtCore import QRect, Qt
 from PyQt6.QtGui import  QPixmap, QIcon, QKeySequence
 
-from database_modules import Users
+from database_modules import Users, createDatabase
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
@@ -88,6 +88,8 @@ class StartLoginWindow(QMainWindow):
         resetPassword.exec()
 
 if __name__ == "__main__":
+    if not os.path.exists(f'{os.path.dirname(sys.argv[0])}/NotepadDatabase.db'):
+        createDatabase()
     app = QApplication(sys.argv)
     window = StartLoginWindow()
     window.show()
