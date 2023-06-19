@@ -3,4 +3,4 @@ cd NoteAppProject
 del install.bat
 del README.md
 pip install -r requirements.txt
-python login_window.py
+call NoteApp.bat
