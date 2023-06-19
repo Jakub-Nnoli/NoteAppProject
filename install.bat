@@ -6,4 +6,4 @@ git remote remove origin
 rmdir /s /q .git
 rmdir /s /q __pycache__
 pip install -r requirements.txt
-call NoteApp.bat
+.\NoteApp.bat

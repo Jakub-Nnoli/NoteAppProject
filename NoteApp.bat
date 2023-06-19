@@ -1,1 +1,1 @@
-python login_window.py
+python .\login_window.py
