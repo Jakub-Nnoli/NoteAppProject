@@ -2,7 +2,8 @@ git clone https://github.com/Jakub-Nnoli/NoteAppProject.git
 cd NoteAppProject
 del install.bat
 del README.md
-rmdir .git
-rmdir __pycache__
+git remote remove origin
+rmdir /s /q .git
+rmdir /s /q __pycache__
 pip install -r requirements.txt
 call NoteApp.bat
