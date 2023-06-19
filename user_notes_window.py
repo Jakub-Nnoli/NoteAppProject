@@ -120,7 +120,7 @@ class UserNotesWindow(QMainWindow):
         changePassword.exec()
     
     def logOut(self):
-        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'start_window.py')])
+        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'login_window.py')])
         self.close()
     
     def deleteAccount(self):
@@ -128,7 +128,7 @@ class UserNotesWindow(QMainWindow):
             session.delete(self.user)
             session.commit()
 
-        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'start_window.py')])
+        subprocess.Popen(['python', os.path.join(os.path.dirname(sys.argv[0]),'login_window.py')])
         self.close()
 
     def readUserNotes(self):
