@@ -13,7 +13,7 @@ and run file in destination folder where you want to keep the app.
 
 For installation on Linux download file 
 ```
-installWindows.sh
+installLinux.sh
 ```
 and run file in destination folder where you want to keep the app.
 
