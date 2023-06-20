@@ -8,4 +8,5 @@ git remote remove origin
 rmdir /s /q .git
 rmdir /s /q __pycache__
 pip install -r requirements.txt
+python .\database_modules.py
 .\NoteApp.bat

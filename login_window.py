@@ -88,8 +88,6 @@ class StartLoginWindow(QMainWindow):
         resetPassword.exec()
 
 if __name__ == "__main__":
-    if not os.path.exists(f'{os.path.dirname(sys.argv[0])}/NotepadDatabase.db'):
-        createDatabase()
     app = QApplication(sys.argv)
     window = StartLoginWindow()
     window.show()

@@ -25,3 +25,7 @@ class Notes(Base):
 def createDatabase():
     engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
     Base.metadata.create_all(engine)
+
+if __name__=='__main__':
+    if not os.path.exists(f'{os.path.dirname(sys.argv[0])}/NotepadDatabase.db'):
+        createDatabase()
