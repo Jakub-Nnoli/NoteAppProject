@@ -1,6 +1,8 @@
 git clone https://github.com/Jakub-Nnoli/NoteAppProject.git
 cd NoteAppProject
-del install.bat
+del installWindows.bat
+del installLinux.sh
+del NoteApp.sh
 del README.md
 git remote remove origin
 rmdir /s /q .git
