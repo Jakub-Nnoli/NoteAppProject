@@ -61,7 +61,7 @@ class UserNotesWindow(QMainWindow):
         self.deleteButton.setText("Delete")
         self.deleteButton.setIcon(QIcon(os.path.join(self.iconPath, "DeleteIcon.png")))
         self.deleteButton.clicked.connect(self.deleteSelectedNote)
-        self.deleteAccount.setShortcut(QKeySequence(Qt.Key.Key_Delete))
+        self.deleteButton.setShortcut(QKeySequence(Qt.Key.Key_Delete))
 
         self.menubar = QMenuBar()
         self.menubar.setGeometry(QRect(0, 0, 800, 22))
