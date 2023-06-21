@@ -23,9 +23,9 @@ class Notes(Base):
     noteUser:Mapped[str] = mapped_column(String, ForeignKey("Users.userLogin"))
 
 def createDatabase():
-    engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+    engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
     Base.metadata.create_all(engine)
 
 if __name__=='__main__':
-    if not os.path.exists(f'{os.path.dirname(sys.argv[0])}/NotepadDatabase.db'):
+    if not os.path.exists(f'{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}'):
         createDatabase()
