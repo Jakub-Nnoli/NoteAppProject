@@ -180,32 +180,32 @@ class ChangeLoginDialog(QDialog):
     def __init__(self, userLogin):
         super().__init__()
 
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
+
+        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
+        
         self.setWindowTitle("NoteApp")
         self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
         self.setFixedSize(400,95)
 
         self.userLogin = userLogin
 
-        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
-
-        self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
-
         self.newUsernameLabel = QLabel(parent=self)
-        self.newUsernameLabel.setGeometry(QRect(10, 50, 81, 31))
+        self.newUsernameLabel.setGeometry(QRect(10, 10, 81, 31))
         self.newUsernameLabel.setText("New username:")
 
         self.saveChangesButton = QPushButton(parent=self)
-        self.saveChangesButton.setGeometry(QRect(280, 90, 111, 31))
+        self.saveChangesButton.setGeometry(QRect(280, 50, 111, 31))
         self.saveChangesButton.setText("Save changes")
         self.saveChangesButton.clicked.connect(self.changeLogin)
 
         self.cancelButton = QPushButton(parent=self)
-        self.cancelButton.setGeometry(QRect(160, 90, 111, 31))
+        self.cancelButton.setGeometry(QRect(160, 50, 111, 31))
         self.cancelButton.setText("Cancel")
         self.cancelButton.clicked.connect(self.cancel)
         
         self.newUsernameEdit = QLineEdit(parent=self)
-        self.newUsernameEdit.setGeometry(QRect(100, 50, 291, 31))
+        self.newUsernameEdit.setGeometry(QRect(100, 10, 291, 31))
 
     def changeLogin(self):
         newUsername = self.newUsernameEdit.text()
@@ -231,22 +231,22 @@ class ChangePasswordDialog(QDialog):
     def __init__(self, userLogin):
         super().__init__()
 
-        self.setWindowTitle("NoteApp")
-        self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
-        self.setFixedSize(400,135)
-
-        self.userLogin = userLogin
-
         self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
+        self.setWindowTitle("NoteApp")
+        self.setWindowIcon(QIcon(os.path.join(self.iconPath, "AppIcon.png")))
+        self.setFixedSize(425,135)
+
+        self.userLogin = userLogin
+
         self.currPasswordLabel = QLabel(parent=self)
-        self.currPasswordLabel.setGeometry(QRect(10, 10, 81, 31))
+        self.currPasswordLabel.setGeometry(QRect(10, 10, 106, 31))
         self.currPasswordLabel.setText("Current password:")
 
         self.newPasswordLabel = QLabel(parent=self)
-        self.newPasswordLabel.setGeometry(QRect(10, 50, 81, 31))
+        self.newPasswordLabel.setGeometry(QRect(10, 50, 106, 31))
         self.newPasswordLabel.setText("New password:")
 
         self.saveChangesButton = QPushButton(parent=self)
@@ -260,11 +260,11 @@ class ChangePasswordDialog(QDialog):
         self.cancelButton.clicked.connect(self.cancel)
 
         self.currPasswordEdit = QLineEdit(parent=self)
-        self.currPasswordEdit.setGeometry(QRect(100, 10, 291, 31))
+        self.currPasswordEdit.setGeometry(QRect(125, 10, 291, 31))
         self.currPasswordEdit.setEchoMode(QLineEdit.EchoMode.Password)
         
         self.newPasswordEdit = QLineEdit(parent=self)
-        self.newPasswordEdit.setGeometry(QRect(100, 50, 291, 31))
+        self.newPasswordEdit.setGeometry(QRect(125, 50, 291, 31))
         self.newPasswordEdit.setEchoMode(QLineEdit.EchoMode.Password)
 
     def changePassword(self):
