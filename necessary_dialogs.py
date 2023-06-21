@@ -1,9 +1,9 @@
 import os, sys
 from datetime import date, time
 from PyQt6 import QtCore
-from PyQt6.QtWidgets import QLineEdit, QPushButton, QLabel, QDialog, QMessageBox, QAbstractSpinBox, QTextBrowser, QDateEdit, QTimeEdit, QApplication
+from PyQt6.QtWidgets import QLineEdit, QPushButton, QLabel, QDialog, QMessageBox, QAbstractSpinBox, QTextBrowser, QDateEdit, QTimeEdit
 from PyQt6.QtCore import QRect, Qt
-from PyQt6.QtGui import  QIcon, QFont
+from PyQt6.QtGui import  QIcon, QFont, QKeySequence
 
 from database_modules import Users
 from sqlalchemy import create_engine, select
@@ -52,6 +52,7 @@ class RegisterDialog(QDialog):
         self.registerButton.setGeometry(QRect(290, 130, 101, 24))
         self.registerButton.setText("Register")
         self.registerButton.clicked.connect(self.registerUser)
+        self.registerButton.setShortcut(QKeySequence(Qt.Key.Key_Return))
 
     def registerUser(self):
         newUsername = self.usernameLineEdit.text()
@@ -111,6 +112,7 @@ class ResetPasswordDialog(QDialog):
         self.newPassButton.setGeometry(QRect(285, 90, 156, 24))
         self.newPassButton.setText("Reset password")
         self.newPassButton.clicked.connect(self.resetPassword)
+        self.newPassButton.setShortcut(QKeySequence(Qt.Key.Key_Return))
 
     def resetPassword(self):
         username = self.usernameLineEdit.text()
@@ -198,6 +200,7 @@ class ChangeLoginDialog(QDialog):
         self.saveChangesButton.setGeometry(QRect(280, 50, 111, 31))
         self.saveChangesButton.setText("Save changes")
         self.saveChangesButton.clicked.connect(self.changeLogin)
+        self.saveChangesButton.setShortcut(QKeySequence(Qt.Key.Key_Return))
 
         self.cancelButton = QPushButton(parent=self)
         self.cancelButton.setGeometry(QRect(160, 50, 111, 31))
@@ -253,6 +256,7 @@ class ChangePasswordDialog(QDialog):
         self.saveChangesButton.setGeometry(QRect(280, 90, 111, 31))
         self.saveChangesButton.setText("Save changes")
         self.saveChangesButton.clicked.connect(self.changePassword)
+        self.saveChangesButton.setShortcut(QKeySequence(Qt.Key.Key_Return))
 
         self.cancelButton = QPushButton(parent=self)
         self.cancelButton.setGeometry(QRect(160, 90, 111, 31))
