@@ -15,7 +15,7 @@ class TextEditorWindow(QMainWindow):
         super().__init__()
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.noteID = noteID
         self.userLogin = userLogin

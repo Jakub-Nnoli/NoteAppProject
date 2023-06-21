@@ -13,7 +13,7 @@ class RegisterDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
@@ -80,7 +80,7 @@ class ResetPasswordDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
@@ -186,7 +186,7 @@ class ChangeLoginDialog(QDialog):
 
         self.userLogin = userLogin
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 
@@ -237,7 +237,7 @@ class ChangePasswordDialog(QDialog):
 
         self.userLogin = userLogin
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 

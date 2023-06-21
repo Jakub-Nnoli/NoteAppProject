@@ -13,7 +13,7 @@ from necessary_dialogs import RegisterDialog, ResetPasswordDialog
 class StartLoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         self.iconPath = os.path.join(os.path.dirname(sys.argv[0]),"Icons")
 

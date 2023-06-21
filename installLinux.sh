@@ -11,4 +11,5 @@ rm -rf .git
 rm -rf __pycache__
 pip install -r requirements.txt
 python database_modules.py
+sudo chmod 777 NotepadDatabase.db
 ./NoteApp.sh

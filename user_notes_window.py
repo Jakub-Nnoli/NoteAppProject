@@ -15,7 +15,7 @@ class UserNotesWindow(QMainWindow):
     def __init__(self, username:str, triggerReminders:int):
         super().__init__()
 
-        self.engine = create_engine(f'sqlite:///{os.path.dirname(sys.argv[0])}/NotepadDatabase.db')
+        self.engine = create_engine(f'sqlite:///{os.path.join(os.path.dirname(sys.argv[0]), "NotepadDatabase.db")}')
 
         with Session(self.engine) as session:
             self.user = session.execute(select(Users).where(Users.userLogin == username)).fetchone()[0]
