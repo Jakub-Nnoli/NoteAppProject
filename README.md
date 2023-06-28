@@ -2,7 +2,8 @@
 NoteApp is a small application for keeping track of upcoming events.
 
 Requirements:
-Python version 3.11.2
+
+Python version 3.11.2 or higher
 
 Git version 2.4.10 or higher
 
